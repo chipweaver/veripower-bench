@@ -1,0 +1,35 @@
+# EDA build artifacts
+**/out/
+**/work/
+**/cov/
+**/csrc/
+**/simv
+**/simv.daidir/
+**/simv.vdb/
+**/*.daidir/
+**/*.vdb/
+**/spyglass_work/
+**/alib-52/
+**/DVEfiles/
+**/*.svf
+**/*.vpd
+**/*.fsdb
+**/*.vcd
+**/*.log
+**/ucli.key
+**/vc_hdrs.h
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Archives
+*.zip
+*.tar.gz
+*.tgz
+
+# ARM AXI spec (restricted license, not redistributable)
+Coral-NPU/handoff/refs/*.pdf
+Coral-NPU/handoff/refs/*.txt
+Coral-NPU/handoff/refs/*.epub

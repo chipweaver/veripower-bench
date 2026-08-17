@@ -1,0 +1,2 @@
+Vendored from github.com/riscv/riscv-opcodes @ aeb94df5dd272d1893d43af270dd8d1b2fef699b
+License: BSD-style (see LICENSE). 用途: RISC-V 逐位指令编码文本真源(手册 HTML 编码仅图像态, 此处补文本).

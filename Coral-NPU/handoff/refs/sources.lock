@@ -1,0 +1,70 @@
+# handoff/refs/sources.lock — [A] 类标准真源锚点（版本钉死）
+# 每条: id / 标准 / 版本(tag或issue) / url / sha256 / license / 是否入仓 / 本地文件
+# 用途: 开发/验证读本目录落盘原文, 不凭训练记忆; 实现逐条引用其条款。
+# 用 fetch.sh 按本锁按需重取并校验 sha256（定死, 非"最新"）。
+
+[[ref]]
+id        = "RV"                       # 统一手册: 覆盖 CoreMiniAxi 全部 RISC-V [A]
+standard  = "RISC-V ISA Manual (Unprivileged+Privileged; 含 Zbb / F / Zfbfmin / Vector v1.0 Zve32x/Zve32f/Zvfbfmin)"
+version   = "riscv-isa-release-74010d0-2026-07-23"
+url       = "https://github.com/riscv/riscv-isa-manual/releases/download/riscv-isa-release-74010d0-2026-07-23/riscv-spec.html"
+sha256    = "0905432edeaf44ab3ae8fc48acde40e12ccf7842357b54c198e50128039f249b"
+license   = "CC (open) — 文本可提交"
+committed = true                       # vendor 入仓(CC 开放): 自包含基线, 直接读, 不依赖 fetch/网络/agent
+localfile = "riscv-spec.html"
+note      = "生产建议钉一个 ratified 里程碑 tag; 此处钉具体发布(commit 74010d0)已满足'版本定死'"
+
+[[ref]]
+id        = "RV-NORM"                  # 机读规范规则库(便于'逐条引用')
+standard  = "RISC-V normative rules (machine-readable)"
+version   = "riscv-isa-release-74010d0-2026-07-23"
+url       = "https://github.com/riscv/riscv-isa-manual/releases/download/riscv-isa-release-74010d0-2026-07-23/norm-rules.json"
+sha256    = "2b29d0e84732586f187e6435a679271fc142edf38af0269c93ce580888529d52"
+license   = "CC (open) — 可提交"
+committed = true                       # vendor 入仓(CC 开放)
+localfile = "riscv-norm-rules.json"
+
+[[ref]]
+id         = "RV-OPC"                  # RISC-V 逐位指令编码(文本真源; 补手册 HTML 编码仅图像态)
+standard   = "riscv/riscv-opcodes (machine-readable instruction encodings)"
+version    = "riscv-opcodes @ aeb94df5dd272d1893d43af270dd8d1b2fef699b"
+url        = "https://github.com/riscv/riscv-opcodes/archive/aeb94df5dd272d1893d43af270dd8d1b2fef699b.tar.gz"
+sha256     = "0fe19c1970bd98df8b256e3fbb3fc3f288629f227f6e31ed5dbbe48ef337ea20"   # tarball
+license    = "BSD-style (RISC-V International) — 可 vendor 入仓"
+committed  = true                      # 已 vendor: handoff/refs/riscv-opcodes/extensions/*
+localfile  = "riscv-opcodes/extensions/{rv_i,rv_m,rv_f,rv_v,rv_zbb,…} + LICENSE"
+note       = "已入仓(2026-07-24)。riscv-spec.html 逐位编码是 486 张 base64 SVG(图像态、非工具无关); 本源给纯文本 match/mask(如 `andn rd rs1 rs2 31..25=32 14..12=7 6..2=0x0C 1..0=3`), 供译码器逐条引用。"
+
+[[ref]]
+id        = "AXI"
+standard  = "ARM AMBA AXI Protocol Specification (ARM IHI 0022)"
+version    = "IHI 0022 Issue L (Released, Non-confidential, 27 Aug 2025)"
+url        = "https://developer.arm.com/documentation/ihi0022/latest/"   # Issue L; ARM 许可门控, 交互式下载
+sha256     = "20aa5f946df5fa97053689d705959b1ef6a90a88f845fa3b686a53311f680ac1"   # PDF 本体
+sha256_txt = "12107b6c4044a202d3885ac2ce481ff088065670baa0b1d87490dcd32005eedc"   # pdftotext -layout 转出(agent 读这份)
+license    = "ARM 版权 (Non-confidential ≠ 可再分发): 可下载自用, 不得再分发"
+committed  = false                     # 禁止提交进公开仓(PDF/TXT 均 .gitignore; 提交=向 GitHub 再分发, 违反 ARM 许可)
+localfile  = "IHI0022L_amba_axi_protocol_spec.pdf (本地自备; pdftotext -layout 转 .txt 供文本引用)"
+note       = "已回填 Issue L + sha256(2026-07-24)。§5.2.1 特性档引的 §A5 在 Issue L = Chapter A5 Transaction identifiers(已核对存在); 其余 A 系列引用于开发时逐条对齐。PDF/TXT 因 ARM 许可不入仓, 靠本 sha256 跨机校验一致性。"
+
+[[ref]]
+id         = "TL"                      # 片上互连基础协议(SiFive TileLink; 补充参考)
+standard   = "SiFive TileLink Specification v1.8.0"
+version    = "1.8.0 (© 2019 SiFive, All rights reserved)"
+url         = "https://raw.githubusercontent.com/chipsalliance/omnixtend/86894139fdb2e76de964cc588aa5fcfb293060d6/OmniXtend-1.0.3/spec/TileLink-1.8.0.pdf"
+sha256     = "61201ed478d7985bfc07d422e677110ec416cb9757ac519caca44dba8bd1ee1f"   # PDF
+license    = "SiFive 版权, All rights reserved(无再分发授权)→ 同 AXI: 不入仓, 本地自备"
+committed  = false                     # PDF/TXT .gitignore; 靠 sha256 跨机校验
+localfile  = "tilelink-1.8.0.pdf (本地; pdftotext -layout → tilelink-1.8.0.txt)"
+note       = "TL 基础语义补充参考。**操作性真源用 OpenTitan TL-UL(见 TL-OT)**, 本份仅辅助。sha256 可复现校验(chipsalliance/omnixtend 镜像)。"
+
+[[ref]]
+id         = "TL-OT"                   # OpenTitan TL-UL 变体(SECDED integrity)—— 操作性真源
+standard   = "OpenTitan TileLink-UL Bus Specification (comportability + SECDED integrity)"
+version    = "lowRISC/opentitan @ 215aac82638ef76bbe81cf05e6f482762aa05fe8 (hw/ip/tlul)"
+url        = "https://github.com/lowRISC/opentitan/tree/215aac82638ef76bbe81cf05e6f482762aa05fe8/hw/ip/tlul"
+sha256     = "N/A(vendored 目录, 见 git)"
+license    = "Apache-2.0 (可 vendor 入仓)"
+committed  = true                      # 已 vendor: handoff/refs/opentitan-tlul/
+localfile  = "opentitan-tlul/README.md + TlulProtocolChecker.md"
+note       = "已入仓(2026-07-24)。§3.1 各轴据此引用: 无 burst / size byte,2B,4B / a_opcode,d_opcode(Get/PutFullData/PutPartialData/AccessAck[Data]) / Command+Data Integrity(SECDED)。"
