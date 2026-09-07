@@ -1,0 +1,8 @@
+Upstream : https://github.com/lowRISC/opentitan
+Commit   : 11478abe1016bffb8a692a6608b29c43a8618371   (2026-08-31)
+License  : Apache-2.0
+Applied  : patches/ot-harness.patch   (11 files, 215 lines)
+
+This directory vendors no OpenTitan source. It carries the patch, the file-list
+and test-list resolvers, and the build/run entry points. Clone the commit above
+and apply the patch; point OT_ROOT at the result.

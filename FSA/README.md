@@ -13,7 +13,8 @@ synthesizable RTL module with a shared datapath.
 
 ## Agent Input
 
-Everything in [`handoff/`](handoff/) is given to the agent:
+Everything in [`intent/`](intent/) is given to the agent — copy the whole directory to
+`<module>/intent/` in the working tree you point it at:
 
 - `brainstorm.md` — complete specification (algorithm, interface, numerical parameters, PPA targets)
 
@@ -68,6 +69,13 @@ Using [`../eda-ref/`](../eda-ref/):
 |--------|--------|
 | Timing WNS | ≥ 0 @ 10 ns (100 MHz) |
 | End-to-end latency | ≤ 80 cycles |
+
+Timing is evaluated with no interconnect estimate: `WIRE_LOAD_MODEL=none`, which is what
+`eda-ref/env.sh` sets and what the VeriPower arm must be given. A library declares neither a
+default wire load model nor a selection group, and the choice is not free — measured across
+every bucket of a TSMC 90 library on five real designs, three close at exactly 0.00 ns setup
+with no model at all, so any bucket puts them negative. Both arms of one evaluation must use
+the same value or their timing and power are not comparable.
 
 ### Structural coverage
 

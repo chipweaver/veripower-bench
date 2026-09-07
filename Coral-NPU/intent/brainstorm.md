@@ -11,7 +11,7 @@ Status: approved
 - **[B]** = 本设计特定要求,以本文为准。
 - 本文未约束者由 RTL 自行决定(见 §8)。
 
-**引用标准（原文落盘于 `handoff/refs/`）**
+**引用标准（原文落盘于 `intent/refs/`）**
 - **[RV-U]** RISC-V Unprivileged ISA:RV32I、M、Zicsr、Zifencei。原文 `riscv-spec.html`。
 - **[RV-B]** RISC-V Bit-Manipulation,Zbb。原文 `riscv-spec.html`。
 - **[RV-F]** 单精度浮点 F(FLEN=32);数值语义(含 IEEE 754 基础运算/舍入/NaN 装箱/异常标志)以手册 F 章为准。原文 `riscv-spec.html`。
@@ -181,7 +181,7 @@ ITCM/DTCM 为单周期访问的紧耦合存储;EXTMEM/DDR 经 AXI 主口访问�
 
 #### 6.2.1 AXI 参数与行为约定 [A]
 
-各可变轴取值如下(语义以 [AXI] 对应条款为准,原文见 `handoff/refs/`):
+各可变轴取值如下(语义以 [AXI] 对应条款为准,原文见 `intent/refs/`):
 
 | 可变轴 | 本项目取值 | [AXI] 条款 |
 |---|---|---|

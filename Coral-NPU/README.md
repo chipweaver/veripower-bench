@@ -15,7 +15,8 @@ implementation.
 
 ## Agent Input
 
-Everything in [`handoff/`](handoff/) is given to the agent:
+Everything in [`intent/`](intent/) is given to the agent — copy the whole directory to
+`<module>/intent/` in the working tree you point it at:
 
 - `brainstorm.md` — complete specification (ISA, CSR, exception model, AXI interface, memory map)
 - `refs/` — pinned external standards: RISC-V spec (HTML + machine-readable opcode encodings, open-source, vendored), OpenTitan TL-UL spec. AXI spec (ARM, restricted license) must be obtained separately per `refs/sources.lock`
@@ -29,12 +30,12 @@ Bare Claude Code:
 ```text
 自主实现 CoreMiniAxi（CoralNPU 标量+浮点子系统） 硬件模块，工具链可参考eda-ref/目录，要求：
 （1）RTL使用verilog-2001语法；
-（2）架构和功能符合handoff/brainstorm.md；
+（2）架构和功能符合intent/brainstorm.md；
 （3）搭建UVM testbench，测试所有功能特性，并收集覆盖率，行、条件、状态机以及翻转覆盖率 > 90%；
 （4）lint/cdc clean；
 （5）syntheis timing WNS≥0 @ 100MHz；
 （6）禁读任何既有实现、参考模型或同题产物，自建目录独立进行纯净开发；
-（7）规格涉及的协议/标准内容以handoff/refs/下提供的原文为唯一真源，不得基于已有/训练知识补全或推断。
+（7）规格涉及的协议/标准内容以intent/refs/下提供的原文为唯一真源，不得基于已有/训练知识补全或推断。
 ```
 
 Claude Code + VeriPower:
@@ -42,12 +43,12 @@ Claude Code + VeriPower:
 ```text
 /veripower:design-flow 自主实现 CoreMiniAxi（CoralNPU 标量+浮点子系统） 硬件模块，要求：
 （1）RTL使用verilog-2001语法；
-（2）架构和功能符合handoff/brainstorm.md；
+（2）架构和功能符合intent/brainstorm.md；
 （3）搭建UVM testbench，测试所有功能特性，并收集覆盖率，行、条件、状态机以及翻转覆盖率 > 90%；
 （4）lint/cdc clean；
 （5）syntheis timing WNS≥0 @ 100MHz；
 （6）禁读任何既有实现、参考模型或同题产物，自建目录独立进行纯净开发；
-（7）规格涉及的协议/标准内容以handoff/refs/下提供的原文为唯一真源，不得基于已有/训练知识补全或推断。
+（7）规格涉及的协议/标准内容以intent/refs/下提供的原文为唯一真源，不得基于已有/训练知识补全或推断。
 本任务授权你自主决策，凡遇人工审批节点一律以你的推荐选项自动通过，无需等我回复。
 ```
 
@@ -108,6 +109,13 @@ Using [`../eda-ref/`](../eda-ref/):
 | Metric | Target |
 |--------|--------|
 | Timing WNS | ≥ 0 @ 10 ns (100 MHz) |
+
+Timing is evaluated with no interconnect estimate: `WIRE_LOAD_MODEL=none`, which is what
+`eda-ref/env.sh` sets and what the VeriPower arm must be given. A library declares neither a
+default wire load model nor a selection group, and the choice is not free — measured across
+every bucket of a TSMC 90 library on five real designs, three close at exactly 0.00 ns setup
+with no model at all, so any bucket puts them negative. Both arms of one evaluation must use
+the same value or their timing and power are not comparable.
 
 #### Structural coverage
 

@@ -12,7 +12,8 @@ synthesizable RTL from a bit-exact fixed-point reference algorithm.
 
 ## Agent Input
 
-Everything in [`handoff/`](handoff/) is given to the agent:
+Everything in [`intent/`](intent/) is given to the agent — copy the whole directory to
+`<module>/intent/` in the working tree you point it at:
 
 - `brainstorm.md` — complete specification (architecture, interface, constraints, PPA targets)
 - `reference/` — bit-exact fixed-point reference algorithm (`fixedpoint.py`, `model.py`) and trained weights (`weights.npz`)
@@ -80,6 +81,13 @@ Using [`../eda-ref/`](../eda-ref/):
 | Latency (best case) | ≤ 1,156 cycles |
 | Latency (worst case, pos=15) | ≤ 1,500 cycles |
 | Throughput | ≥ 60,600 tokens/s @ 80 MHz |
+
+Timing is evaluated with no interconnect estimate: `WIRE_LOAD_MODEL=none`, which is what
+`eda-ref/env.sh` sets and what the VeriPower arm must be given. A library declares neither a
+default wire load model nor a selection group, and the choice is not free — measured across
+every bucket of a TSMC 90 library on five real designs, three close at exactly 0.00 ns setup
+with no model at all, so any bucket puts them negative. Both arms of one evaluation must use
+the same value or their timing and power are not comparable.
 
 Latency is measured by `tb_core.v` (`CYCLES_PER_TOKEN` and `AVG_CYCLES` printouts).
 

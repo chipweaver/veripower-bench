@@ -1,5 +1,5 @@
 #!/bin/bash
-# handoff/refs/fetch.sh — 按 sources.lock 复现落盘 [A] 类标准原文, 并校验 sha256(定死)。
+# intent/refs/fetch.sh — 按 sources.lock 复现落盘 [A] 类标准原文, 并校验 sha256(定死)。
 # 开源项(RISC-V)自动下载+校验; 许可受限项(AXI)仅提示手动自备。
 set -u
 cd "$(dirname "$0")"

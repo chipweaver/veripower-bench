@@ -5,7 +5,7 @@ before trusting it against an implementation under test."""
 import os, sys
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
-REF = os.path.join(HERE, "..", "..", "handoff", "reference")
+REF = os.path.join(HERE, "..", "..", "intent", "reference")
 sys.path.insert(0, REF)
 from model import ModelConfig
 from fixedpoint import QModel, generate

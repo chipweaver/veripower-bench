@@ -1,0 +1,3 @@
+Vendored from github.com/lowRISC/opentitan @ 11478abe1016bffb8a692a6608b29c43a8618371
+(doc/contributing/hw/comportability/README.md). License: Apache-2.0.
+用途: comportable IP 规范 —— 寄存器、中断、alert、总线接入的约定。[A] 真源。

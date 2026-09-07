@@ -2,7 +2,7 @@
 // fa_core — protocol / scenario testbench (SC-003/4/5/6 robustness gate).
 //
 // Complements the tolerance/latency gate (fa_core_golden_tb.sv) by exercising
-// the handshake & control contract (handoff/brainstorm.md §3 interface + §6 timing
+// the handshake & control contract (intent/brainstorm.md §3 interface + §6 timing
 // scenarios), which is variant-neutral. Every scenario replays a
 // held-out golden tile under an adverse handshake and asserts BOTH the protocol
 // property AND that the output still matches the golden within tolerance.

@@ -3,7 +3,7 @@
 //
 // The independent, arm-neutral, variant-neutral adjudication TB. It is NOT any
 // implementation's own TB (no self-eval): ONE fixed bench binds ANY DUT that
-// conforms to the pinned top interface (handoff/brainstorm.md §3) and scores its
+// conforms to the pinned top interface (intent/brainstorm.md §3) and scores its
 // top-level `o_out` against the held-out golden vectors from reference.py —
 // black-box, no internal probes. It serves both fa_core and fa_core_fsa.
 //

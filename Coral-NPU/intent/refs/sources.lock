@@ -1,4 +1,4 @@
-# handoff/refs/sources.lock — [A] 类标准真源锚点（版本钉死）
+# intent/refs/sources.lock — [A] 类标准真源锚点（版本钉死）
 # 每条: id / 标准 / 版本(tag或issue) / url / sha256 / license / 是否入仓 / 本地文件
 # 用途: 开发/验证读本目录落盘原文, 不凭训练记忆; 实现逐条引用其条款。
 # 用 fetch.sh 按本锁按需重取并校验 sha256（定死, 非"最新"）。
@@ -31,7 +31,7 @@ version    = "riscv-opcodes @ aeb94df5dd272d1893d43af270dd8d1b2fef699b"
 url        = "https://github.com/riscv/riscv-opcodes/archive/aeb94df5dd272d1893d43af270dd8d1b2fef699b.tar.gz"
 sha256     = "0fe19c1970bd98df8b256e3fbb3fc3f288629f227f6e31ed5dbbe48ef337ea20"   # tarball
 license    = "BSD-style (RISC-V International) — 可 vendor 入仓"
-committed  = true                      # 已 vendor: handoff/refs/riscv-opcodes/extensions/*
+committed  = true                      # 已 vendor: intent/refs/riscv-opcodes/extensions/*
 localfile  = "riscv-opcodes/extensions/{rv_i,rv_m,rv_f,rv_v,rv_zbb,…} + LICENSE"
 note       = "已入仓(2026-07-24)。riscv-spec.html 逐位编码是 486 张 base64 SVG(图像态、非工具无关); 本源给纯文本 match/mask(如 `andn rd rs1 rs2 31..25=32 14..12=7 6..2=0x0C 1..0=3`), 供译码器逐条引用。"
 
@@ -65,6 +65,6 @@ version    = "lowRISC/opentitan @ 215aac82638ef76bbe81cf05e6f482762aa05fe8 (hw/i
 url        = "https://github.com/lowRISC/opentitan/tree/215aac82638ef76bbe81cf05e6f482762aa05fe8/hw/ip/tlul"
 sha256     = "N/A(vendored 目录, 见 git)"
 license    = "Apache-2.0 (可 vendor 入仓)"
-committed  = true                      # 已 vendor: handoff/refs/opentitan-tlul/
+committed  = true                      # 已 vendor: intent/refs/opentitan-tlul/
 localfile  = "opentitan-tlul/README.md + TlulProtocolChecker.md"
 note       = "已入仓(2026-07-24)。§3.1 各轴据此引用: 无 burst / size byte,2B,4B / a_opcode,d_opcode(Get/PutFullData/PutPartialData/AccessAck[Data]) / Command+Data Integrity(SECDED)。"

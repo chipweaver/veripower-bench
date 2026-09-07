@@ -27,14 +27,16 @@ pipeline, no gate, no orchestration here.
   skeletons — replace with your design's real clocks/resets/ports.
 - **Environment**: export `LIB_DB` (std-cell `.db`), `LIB_V`, `UVM_HOME`, and
   set `TOP`. `env.sh` lists every variable the targets read; the Makefile
-  sources it before invoking each tool.
+  sources it before invoking each tool. It also sets `WIRE_LOAD_MODEL=none` —
+  synthesis's interconnect estimate, and this benchmark's definition; see the
+  comment there for what a model costs and why both arms must use the same value.
 
 ## Targets (flat — no cross-stage dependency; you sequence them)
 
 | `make` target | Tool | Needs |
 |---|---|---|
 | `lint` / `cdc` | `spyglass` | `filelist.txt` + `constraints/example.sgdc` |
-| `synth` | `dc_shell` | `FILELIST` (RTL manifest, one path per line) + `SDC_IN` (default `constraints/example.sdc`) + `LIB_DB` → `out/<TOP>_syn.{v,sdc,sdf}` |
+| `synth` | `dc_shell` | `FILELIST` (RTL manifest, one path per line) + `SDC_IN` (default `constraints/example.sdc`) + `LIB_DB` + `WIRE_LOAD_MODEL` → `out/<TOP>_syn.{v,sdc,sdf}` |
 | `sta` | `pt_shell` | `out/<TOP>_syn.v` + `.sdc` + `LIB_DB` → `timing-report.txt` |
 | `sim-compile` | `vcs` | `filelist.f` (RTL+TB) + `UVM_HOME` → `./simv` |
 | `sim-run TEST=<t>` | `simv` | a compiled `./simv` |

@@ -1,0 +1,215 @@
+diff --git a/hw/dv/sv/cip_lib/cip_base_env_cfg.sv b/hw/dv/sv/cip_lib/cip_base_env_cfg.sv
+index 8901b8a3dd..a3c4af432b 100644
+--- a/hw/dv/sv/cip_lib/cip_base_env_cfg.sv
++++ b/hw/dv/sv/cip_lib/cip_base_env_cfg.sv
+@@ -101,7 +101,7 @@ class cip_base_env_cfg #(type RAL_T = dv_base_reg_block) extends dv_base_env_cfg
+ 
+   // if module has alerts, this list_of_alerts needs to override in cfg before super.initialize()
+   // function is called
+-  string list_of_alerts[] = {};
++  string list_of_alerts[];
+ 
+   constraint edn_clk_freq_mhz_c {
+     solve tlul_and_edn_clk_freq_diff before edn_clk_freq_mhz;
+diff --git a/hw/dv/sv/cip_lib/seq_lib/cip_base_vseq__tl_errors.svh b/hw/dv/sv/cip_lib/seq_lib/cip_base_vseq__tl_errors.svh
+index aab087f2ea..a815d17d20 100644
+--- a/hw/dv/sv/cip_lib/seq_lib/cip_base_vseq__tl_errors.svh
++++ b/hw/dv/sv/cip_lib/seq_lib/cip_base_vseq__tl_errors.svh
+@@ -5,9 +5,7 @@
+ // Shorthand to create and send a TL error seq
+ // Set low priority (1) to send error item to TL agent, so when crossing error item with normal
+ // seq, normal seq with default priority (100) has the priority to access TL driver
+-`define create_tl_access_error_case(task_name_, with_c_,
+-                                    seq_t_ = tl_host_custom_seq #(cip_tl_seq_item),
+-                                    seqr_t)                                                \
++`define create_tl_access_error_case(task_name_, with_c_, seq_t_ = tl_host_custom_seq #(cip_tl_seq_item), seqr_t)                                                \
+   begin                                                                                    \
+     seq_t_ tl_seq;                                                                         \
+     `uvm_info(`gfn, {"Running ", `"task_name_`"}, UVM_MEDIUM)                              \
+diff --git a/hw/dv/sv/csr_utils/csr_aliasing_seq.sv b/hw/dv/sv/csr_utils/csr_aliasing_seq.sv
+index 71465d55b1..b842795cf6 100644
+--- a/hw/dv/sv/csr_utils/csr_aliasing_seq.sv
++++ b/hw/dv/sv/csr_utils/csr_aliasing_seq.sv
+@@ -168,5 +168,10 @@ function csr_aliasing_seq::reg_queue_t
+ 
+   uvm_reg ret[$] = reg_queue;
+   ret.shuffle();
+-  return (reg_queue.size() < m_reads_per_chunk) ? ret[0:m_reads_per_chunk - 1] : ret;
++  // Upstream bug: the comparison is inverted. The doc comment at line 52 says
++  // "a random subset with m_reads_per_chunk registers, or the entire list if
++  // [it is smaller]", but as written a queue SMALLER than the chunk size gets
++  // sliced [0:m_reads_per_chunk-1] — past its end. Simulators that bounds-check
++  // queue slices abort here; newer VCS clamps silently.
++  return (reg_queue.size() > m_reads_per_chunk) ? ret[0:m_reads_per_chunk - 1] : ret;
+ endfunction
+diff --git a/hw/dv/sv/csr_utils/csr_utils_pkg.sv b/hw/dv/sv/csr_utils/csr_utils_pkg.sv
+index 1e1b4f2928..bc6f45417a 100644
+--- a/hw/dv/sv/csr_utils/csr_utils_pkg.sv
++++ b/hw/dv/sv/csr_utils/csr_utils_pkg.sv
+@@ -401,7 +401,12 @@ package csr_utils_pkg;
+ 
+     foreach (paths[0].slices[i]) begin
+       uvm_reg_data_t field_val;
+-      `DV_CHECK_FATAL(uvm_hdl_read(paths[0].slices[i].path, field_val),
++      // VCS L-2016.06's UVM DPI returns 51 (not 0) when the HDL path does not
++      // exist, so a truthiness test passes and field_val is silently 0.
++      // Measured: uvm_hdl_read("<real>")=1, uvm_hdl_read("<missing>")=51.
++      // Compare against 1 so an unresolved path is loud instead of a false
++      // functional mismatch.
++      `DV_CHECK_FATAL(uvm_hdl_read(paths[0].slices[i].path, field_val) == 1,
+                       $sformatf("Failed to read %s, slice %d, at path %s",
+                                 csr.get_full_name(), i, paths[0].slices[i].path),
+                       $sformatf("%m"))
+diff --git a/hw/dv/sv/dv_base_reg/dv_base_shadowed_field_cov.sv b/hw/dv/sv/dv_base_reg/dv_base_shadowed_field_cov.sv
+index bae4a6a1fa..287817a943 100644
+--- a/hw/dv/sv/dv_base_reg/dv_base_shadowed_field_cov.sv
++++ b/hw/dv/sv/dv_base_reg/dv_base_shadowed_field_cov.sv
+@@ -7,8 +7,8 @@
+ class dv_base_shadowed_field_cov extends uvm_object;
+   `uvm_object_utils(dv_base_shadowed_field_cov)
+ 
+-  covergroup shadow_field_errs_cg(string name) with function sample(bit update_err = 0,
+-                                                                    bit storage_err = 0);
++  covergroup shadow_field_errs_cg(string name) with function sample(bit update_err,
++                                                                    bit storage_err);
+     option.per_instance = 1;
+     option.name         = name;
+ 
+diff --git a/hw/dv/sv/i2c_agent/i2c_driver.sv b/hw/dv/sv/i2c_agent/i2c_driver.sv
+index 7211903895..bbe0692834 100644
+--- a/hw/dv/sv/i2c_agent/i2c_driver.sv
++++ b/hw/dv/sv/i2c_agent/i2c_driver.sv
+@@ -70,7 +70,10 @@ class i2c_driver extends dv_base_driver #(i2c_item, i2c_agent_cfg);
+           disable fork;
+         end: iso_fork
+       join
+-      if (sent_item) seq_item_port.item_done();
++      // VCS-2016's UVM-1.2 sequencer errors on a second get_next_item() when the
++      // previous item was never completed. On an on-the-fly reset the item is
++      // dropped (req.clear_all()), so the driver is done with it either way.
++      seq_item_port.item_done();
+       // When agent reset happens, flush all sequence items from sequencer request queue,
+       // before it starts a new sequence.
+       if (cfg.driver_rst) begin
+diff --git a/hw/ip/i2c/dv/env/seq_lib/i2c_base_vseq.sv b/hw/ip/i2c/dv/env/seq_lib/i2c_base_vseq.sv
+index a0c94b5bf1..71556e43df 100644
+--- a/hw/ip/i2c/dv/env/seq_lib/i2c_base_vseq.sv
++++ b/hw/ip/i2c/dv/env/seq_lib/i2c_base_vseq.sv
+@@ -734,7 +734,7 @@ class i2c_base_vseq extends cip_base_vseq #(
+       // Clear the 'cmd_complete' interrupt if pending
+       begin
+         uvm_reg_data_t intr_state;
+-        csr_rd(.ptr(ral.intr_state), .value(intr_state), .backdoor(1));
++        csr_rd(.ptr(ral.intr_state), .value(intr_state), .backdoor(0));
+         if (get_field_val(ral.intr_state.cmd_complete, intr_state)) begin
+           `uvm_info(`gfn, "Clearing pending 'CmdComplete' interrupt.", UVM_HIGH)
+           clear_interrupt(CmdComplete, 0);
+@@ -869,17 +869,27 @@ class i2c_base_vseq extends cip_base_vseq #(
+     end
+ 
+     // Next randomize the number of data bytes in each transfer.
+-    `DV_CHECK_STD_RANDOMIZE_WITH_FATAL(transfer_lengths,
+-      transfer_lengths.size() == num_transfers;
+-      transfer_lengths.sum() == num_data_total;
+-      foreach (transfer_lengths[i]) {
+-        // Bound the size of each transfer to limit the solve space to positive integers
+-        transfer_lengths[i] inside {[cfg.min_xfer_len : num_data_total]};
+-      }
+-      // Don't place RSTARTs too close to the start or end of the transaction.
+-      transfer_lengths[0] > 0;
+-      transfer_lengths[num_transfers - 1] > 0;
+-    )
++    // VCS-2016 does not support `array.sum()` in a constraint. Build an equivalent
++    // random partition of num_data_total into num_transfers parts, each in
++    // [max(min_xfer_len,1) : num_data_total]. Same feasible set; the distribution
++    // over it is uniform-by-unit rather than solver-chosen.
++    begin
++      int unsigned base_len;
++      int unsigned remaining;
++      int unsigned idx;
++      base_len = (cfg.min_xfer_len < 1) ? 1 : cfg.min_xfer_len;
++      `DV_CHECK_FATAL(num_transfers * base_len <= num_data_total)
++      transfer_lengths = new[num_transfers];
++      foreach (transfer_lengths[i]) transfer_lengths[i] = base_len;
++      remaining = num_data_total - (num_transfers * base_len);
++      while (remaining > 0) begin
++        idx = $urandom_range(0, num_transfers - 1);
++        if (transfer_lengths[idx] < num_data_total) begin
++          transfer_lengths[idx]++;
++          remaining--;
++        end
++      end
++    end
+ 
+     // Loop over the list of transfers we wish to construct, adding in data and control signals
+     // as appropriate. The address and data-direction of each is chosen randomly at this point.
+diff --git a/hw/ip/i2c/dv/env/seq_lib/i2c_host_fifo_overflow_vseq.sv b/hw/ip/i2c/dv/env/seq_lib/i2c_host_fifo_overflow_vseq.sv
+index 8a2808830f..cc2132a9ac 100644
+--- a/hw/ip/i2c/dv/env/seq_lib/i2c_host_fifo_overflow_vseq.sv
++++ b/hw/ip/i2c/dv/env/seq_lib/i2c_host_fifo_overflow_vseq.sv
+@@ -70,7 +70,7 @@ class i2c_host_fifo_overflow_vseq extends i2c_rx_tx_vseq;
+   task process_rx_overflow_intr();
+     bit rx_overflow;
+ 
+-    csr_rd(.ptr(ral.intr_state.rx_overflow), .value(rx_overflow), .backdoor(1'b1));
++    csr_rd(.ptr(ral.intr_state.rx_overflow), .value(rx_overflow), .backdoor(0));
+     if (rx_overflow) begin
+       cnt_rx_overflow++;
+       clear_interrupt(RxOverflow);
+diff --git a/hw/ip/prim/rtl/prim_util_pkg.sv b/hw/ip/prim/rtl/prim_util_pkg.sv
+index b1302cc23d..d3439c61b4 100644
+--- a/hw/ip/prim/rtl/prim_util_pkg.sv
++++ b/hw/ip/prim/rtl/prim_util_pkg.sv
+@@ -41,7 +41,16 @@ package prim_util_pkg;
+    *   logic [vbits(64 + 1)-1:0] store_number_64;       // width is [6:0]
+    */
+   function automatic integer vbits(integer value);
+-    return (value == 1) ? 1 : $clog2(value);
++    integer v;
++    integer n;
++    if (value == 1) return 1;
++    v = value - 1;
++    n = 0;
++    while (v > 0) begin
++      v = v >> 1;
++      n = n + 1;
++    end
++    return n;
+   endfunction
+ 
+   /**
+diff --git a/hw/ip/usbdev/dv/env/seq_lib/usbdev_spray_packets_vseq.sv b/hw/ip/usbdev/dv/env/seq_lib/usbdev_spray_packets_vseq.sv
+index 53bd7b9368..14fc641676 100644
+--- a/hw/ip/usbdev/dv/env/seq_lib/usbdev_spray_packets_vseq.sv
++++ b/hw/ip/usbdev/dv/env/seq_lib/usbdev_spray_packets_vseq.sv
+@@ -266,7 +266,12 @@ class usbdev_spray_packets_vseq extends usbdev_base_vseq;
+       act_buffer_id = get_field_val(ral.rxfifo.buffer, rx_fifo_read);
+       // Check the properties and content of the received packet, observing that we do not know
+       // into which buffer the packet will have been received.
+-      check_rxfifo_packet(exp_rx[0].ep, exp_rx[0].setup, exp_rx[0].data, rx_fifo_read);
++      // VCS-2016: a hierarchical struct-array member cannot bind to a `ref` port.
++      begin
++        byte unsigned exp_data_q[];
++        exp_data_q = exp_rx[0].data;
++        check_rxfifo_packet(exp_rx[0].ep, exp_rx[0].setup, exp_data_q, rx_fifo_read);
++      end
+       void'(exp_rx.pop_front());
+       rx_cnt++;
+       // Release the buffer that was used.
+diff --git a/hw/ip/usbdev/dv/env/usbdev_scoreboard.sv b/hw/ip/usbdev/dv/env/usbdev_scoreboard.sv
+index bd0257485d..f92f42fd22 100644
+--- a/hw/ip/usbdev/dv/env/usbdev_scoreboard.sv
++++ b/hw/ip/usbdev/dv/env/usbdev_scoreboard.sv
+@@ -108,7 +108,12 @@ class usbdev_scoreboard extends cip_base_scoreboard #(
+         process_usb20_rsp();
+         // Prediction checker will discard any predictions over a DUT reset since they can no longer
+         // be considered relevant; the CSR state will be reset.
++        // patch 11: the loosely-timed register checker is the only RAL-backdoor
++        // user in usbdev's DV, and its hdl_paths name the reference reg_top's
++        // internals. Gated so both behaviours are measurable from one source.
++`ifndef OT_NO_TIMED_REG_CHK
+         timed_regs.check_predictions(cfg.under_reset);
++`endif
+         handle_resets();
+       join_none
+     end

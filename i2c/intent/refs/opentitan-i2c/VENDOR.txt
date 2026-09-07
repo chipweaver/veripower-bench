@@ -1,0 +1,5 @@
+Vendored from github.com/lowRISC/opentitan @ 11478abe1016bffb8a692a6608b29c43a8618371
+(hw/ip/i2c/doc + hw/ip/i2c/README.md). License: Apache-2.0.
+用途: i2c 的功能/寄存器/接口 [A] 真源。registers.md 与 interfaces.md 由上游
+util/regtool.py 从 hw/ip/i2c/data/i2c.hjson 生成 —— 该 hjson **不在交付范围内**
+(它经 regtool 可直接生成约一半 RTL); 本目录的 markdown 是同一真值的人类可读形式。

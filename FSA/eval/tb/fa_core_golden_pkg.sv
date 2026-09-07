@@ -2,7 +2,7 @@
 // fa_core_golden_pkg — shared helpers for the fa_core adjudication benches.
 //
 // Arm-neutral, variant-neutral: everything here is fixed by the black-box contract
-// in handoff/brainstorm.md (§3 interface, §7 gates, §8 acceptance).
+// in intent/brainstorm.md (§3 interface, §7 gates, §8 acceptance).
 // ============================================================================
 package fa_core_golden_pkg;
 

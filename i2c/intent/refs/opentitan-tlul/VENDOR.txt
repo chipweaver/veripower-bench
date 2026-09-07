@@ -1,0 +1,2 @@
+Vendored from github.com/lowRISC/opentitan @ 215aac82638ef76bbe81cf05e6f482762aa05fe8 (hw/ip/tlul).
+License: Apache-2.0. 用途: T3 SoC 片上总线 TL-UL(含 SECDED integrity)操作性 [A] 真源.

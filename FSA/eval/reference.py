@@ -2,7 +2,7 @@
 
 The held-out, arm-neutral oracle for adjudicating a `fa_core` DUT (either the
 `fa_core` or the retained `fa_core_fsa` variant — they share one black-box
-contract; see handoff/brainstorm.md). It produces the trusted attention output the DUT is
+contract; see intent/brainstorm.md). It produces the trusted attention output the DUT is
 measured against — it is NOT the DUT's model: it computes the mathematically
 exact attention in high precision and lets the DUT deviate up to the pinned
 tolerance (MaxErr < 1e-2, MAE < 1e-3). It deliberately does NOT replicate any
@@ -16,7 +16,7 @@ more precise than the pinned "fp32 reference" — the ~1e-7 gap is negligible vs
 the 1e-3 gate), with scores/outputs rounded to fp32 at the domain boundaries.
 Fully deterministic (stdlib `random`, seeded; no BLAS threading) and auditable.
 
-Contract pinned by handoff/brainstorm.md (the single authoritative spec):
+Contract pinned by intent/brainstorm.md (the single authoritative spec):
   - dims Br = Bc = d = 4; scale 1/√d = 0.5; safe (max-subtracted) softmax.
   - causal: positions j > i masked (excluded from row-max and softmax).
   - stimulus: N(0,1) clamped to ±4σ, quantized to fp16, seeded.

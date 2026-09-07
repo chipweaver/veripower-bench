@@ -1,4 +1,4 @@
-# handoff/refs — [A] 类标准的落盘真源
+# intent/refs — [A] 类标准的落盘真源
 
 目的：让开发**不依赖模型的训练知识**——[A] 类标准的原文在此落盘、版本钉死，
 开发与验证**读原文、逐条引用**，从而可复现、可审计、与模型/工具无关（老手新手皆可）。
@@ -11,7 +11,7 @@
 
 ## 用法
 ```
-bash handoff/refs/fetch.sh      # 拉取并校验 RISC-V 原文; 提示 AXI 手动自备
+bash intent/refs/fetch.sh      # 拉取并校验 RISC-V 原文; 提示 AXI 手动自备
 ```
 - **RISC-V**（开源 CC）：`riscv-spec.html`（RV-U/RV-P/Zbb 统一手册）+ `riscv-norm-rules.json`（机读规范规则，便于逐条引用）。**已直接入仓（vendored）**：开发/验证直接读这两份，**无需跑 `fetch.sh`、无需网络、不依赖 agent 拉取**；`fetch.sh` 退化为"完整性自检 + 全新机器 bootstrap"。
 - **AXI**（ARM 版权，**不得再分发**）：不入仓；开发者按 `sources.lock` 的 URL 本地自备

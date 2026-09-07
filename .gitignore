@@ -30,6 +30,10 @@ __pycache__/
 *.tgz
 
 # ARM AXI spec (restricted license, not redistributable)
-Coral-NPU/handoff/refs/*.pdf
-Coral-NPU/handoff/refs/*.txt
-Coral-NPU/handoff/refs/*.epub
+Coral-NPU/intent/refs/*.pdf
+Coral-NPU/intent/refs/*.txt
+Coral-NPU/intent/refs/*.epub
+
+# ot-harness build products
+ot-work/
+**/ot-work/
