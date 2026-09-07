@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Parse an OpenTitan IP top's module header: imports and port declarations.
 
-Shared by mkstub.py and mkshim.py so the parser exists once.
+Used by mkstub.py to give the negative control the reference's port list.
 """
 import re, sys
 

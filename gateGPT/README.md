@@ -25,15 +25,15 @@ The agent receives no reference RTL. Micro-architecture is unconstrained.
 Bare Claude Code:
 
 ```text
-自主实现 microgpt_core 硬件模块。brainstorm.md 为唯一规格（含验收判据），
-reference/ 为数值行为唯一权威，微架构自定。EDA 工具用法参考 ../../eda-ref/。
+自主实现 microgpt_core 硬件模块。intent/brainstorm.md 为唯一规格（含验收判据），
+intent/reference/ 为数值行为唯一权威，微架构自定。EDA 工具用法参考 ../../eda-ref/。
 ```
 
 Claude Code + VeriPower:
 
 ```text
-/veripower:design-flow 自主实现 microgpt_core 硬件模块。brainstorm.md 为唯一规格
-（含验收判据），reference/ 为数值行为唯一权威，微架构自定。
+/veripower:design-flow 自主实现 microgpt_core 硬件模块。intent/brainstorm.md 为唯一规格
+（含验收判据），intent/reference/ 为数值行为唯一权威，微架构自定。
 本任务授权你自主决策，凡遇人工审批节点一律以你的推荐选项自动通过，无需等我回复。
 ```
 

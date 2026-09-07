@@ -25,14 +25,14 @@ The agent receives no reference RTL or oracle. Micro-architecture is unconstrain
 Bare Claude Code:
 
 ```text
-自主实现 fa_core 硬件模块。brainstorm.md 为唯一规格（含验收判据），
+自主实现 fa_core 硬件模块。intent/brainstorm.md 为唯一规格（含验收判据），
 微架构自定。EDA 工具用法参考 ../../eda-ref/。
 ```
 
 Claude Code + VeriPower:
 
 ```text
-/veripower:design-flow 自主实现 fa_core 硬件模块。brainstorm.md 为唯一规格
+/veripower:design-flow 自主实现 fa_core 硬件模块。intent/brainstorm.md 为唯一规格
 （含验收判据），微架构自定。
 本任务授权你自主决策，凡遇人工审批节点一律以你的推荐选项自动通过，无需等我回复。
 ```

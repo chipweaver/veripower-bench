@@ -30,8 +30,6 @@ Everything in [`intent/`](intent/) is given to the agent — copy the whole dire
   request-channel properties are assumptions on the testbench and nine are
   assertions on the design — five on the response channel and four requiring an
   eventual `d_error` for an illegal request
-- `refs/tlul-flattened-layout.md` — where each TL-UL field sits when `tl_i`/`tl_o`
-  are plain vectors, derived mechanically from the pinned `tlul_pkg`
 
 Withheld: the upstream RTL, the DV environment, and
 `hw/ip/i2c/data/i2c.hjson` — `regtool` turns that hjson into `i2c_reg_pkg` +
